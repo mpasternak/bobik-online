@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hej</title>
+</head>
+<body>
+<h1>Konfiguracja BOBIK-WEB</h1>
+Widzisz ten ekran, bo oprogramowanie jest nieskonfigurowane. Wpisz nazwę modelu AI,
+który chcesz używać oraz klucz do API.
+<p></p>
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Zapisz ustawienia">
+</form>
+
+</body>
+</html>

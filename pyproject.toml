@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "bobik-web"
+version = "0.1.0"
+description = "Web UI to the digital preanesthetic chat-bot Bobik"
+authors = ["Michał Pasternak <michal.dtz@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Django = "^5.1.1"
+psycopg = "^3.2.1"
+docutils = "^0.21.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
