@@ -1,10 +1,13 @@
+from anthropic import APIConnectionError
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView
 from docutils.core import publish_parts
 from docutils.utils import Reporter
+from openai import APIConnectionError as OpenAIAPIConnectionError
 
-from bobik_web_chat.models import BobikChatParameters
+from bobik_web_chat.models import BobikChat
 
 
 def rst_to_html(rst_string):
@@ -20,7 +23,7 @@ def rst_to_html(rst_string):
 
 
 class UtworzLinkDlaPacjenta(CreateView):
-    model = BobikChatParameters
+    model = BobikChat
     fields = [
         "imie_pacjenta",
         "wiek_pacjenta",
@@ -35,35 +38,45 @@ class UtworzLinkDlaPacjenta(CreateView):
 
 
 class PokazLinkDlaPacjenta(DetailView):
-    model = BobikChatParameters
+    model = BobikChat
 
     def get_context_data(self, **kwargs):
         kwargs["full_site"] = self.request.META.get("HTTP_HOST")
         return kwargs
 
 
-class BobikChat(DetailView):
-    model = BobikChatParameters
-    template_name = "bobik_web_chat/bobikchatparameters_chat.html"
+class BobikChatView(DetailView):
+    model = BobikChat
+    template_name = "bobik_web_chat/bobikchat_chat.html"
 
     def get_chat(self):
-        self.object = self.get_object()
-        self.chat = self.object.get_bobik_chat()
-        return self.chat
+        self.object: BobikChat = self.get_object()
+        self.object.start_bobik_chat()
+        return self.object
 
     def post(self, request, *args, **kwargs):
-        chat = self.get_chat()
         if request.POST.get("msg"):
-            list(self.chat.send_message(request.POST.get("msg")))
+            try:
+                list(self.get_chat().send_message(request.POST.get("msg")))
+            except (OpenAIAPIConnectionError, APIConnectionError) as e:
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    "Wystąpił błąd połączenia z API AI - " + str(e) + ". "
+                    "Spróbuj później. Twój komunikat prawdopodobnie nie został wysłany. "
+                )
+
         return HttpResponseRedirect(".")
 
     def get_context_data(self, **kwargs):
         chat = self.get_chat()
 
         for elem in chat.get_messages():
-            messages = list(list(elem.checkpoint["channel_values"]["messages"][1:]))
-            kwargs["messages"] = messages
-            for message in kwargs["messages"]:
+            # Przeskocz 2 komunikaty z listy. Pierwszy to prompt systemowy,
+            # drugi to komunikat "Przywitaj się", bo bez tego AI będzie milczeć.
+            messages = list(list(elem.checkpoint["channel_values"]["messages"][2:]))
+            kwargs["bobik_messages"] = messages
+            for message in kwargs["bobik_messages"]:
                 if message.type == "human":
                     continue
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Eksperymentalny system preanestetyczny BOBIK-ONLINE</h1>
+<h1>Zniesienie odpowiedzialności</h1>
+<ol>
+    <li>korzystasz z tego serwisu internetowego na własną odpowiedzialność</li>
+    <li>to oprogramowanie NIE może być źródłem informacji medycznej w rozumieniu prawnym, kolokwialnym ani żadnym
+        innym
+    </li>
+    <li>to oprogramowanie udostępniane jest w dobrej wierze do testów jako produkt eksperymentalny</li>
+    <li>rozmowy są logowane, adresy IP mogą być logowane; informacje te mogą być wykorzystane
+        do celów dowolnych przez  właściciela serwisu
+    </li>
+    <li>to oprogramowanie jest dostarczane w konfiguracji testowej, nie zaś produkcyjnej; dostęp do niego nie
+    powinien być możliwy z publicznego internetu</li>
+    <li>prosimy o rozwagę</li>
+    <li>użycie poniższego formularza oznacza zgodę na powyższe warunki</li>
+    <li>podsumowania wysyłane będą na adres administratora serwisu</li>
+    <li>autor oprogramowania zaprasza do kontaktu <a href="mailto:michal.dtz@gmail.com?Subject=BobikAI">michal.dtz@gmail.com</a></li>
+</ol>
+<h1>Generowanie linku do rozmowy dla pacjenta</h1>
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Wygeneruj link dla pacjenta">
+</form>
+
+<h1>Przydatne linki</h1>
+<a href="/admin/">panel administracyjny</a>
+
+</body>
+</html>

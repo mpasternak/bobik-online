@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bobik_web_setup", "0001_initial"),
+        ("bobik_setup", "0001_initial"),
     ]
 
     operations = [

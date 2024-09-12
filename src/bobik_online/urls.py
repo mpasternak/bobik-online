@@ -15,8 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from bobik_web_chat.views import BobikChat, PokazLinkDlaPacjenta, UtworzLinkDlaPacjenta
-from bobik_web_setup.views import BobikWebSetupView
+from bobik_setup.views import BobikWebSetupView
+from bobik_web_chat.views import (
+    BobikChatView,
+    PokazLinkDlaPacjenta,
+    UtworzLinkDlaPacjenta,
+)
 from django.contrib import admin
 from django.urls import path
 
@@ -35,7 +39,7 @@ urlpatterns = [
     ),
     path(
         "chat/<uuid:pk>/",
-        BobikChat.as_view(),
+        BobikChatView.as_view(),
         name="chat_url",
     ),
 ]

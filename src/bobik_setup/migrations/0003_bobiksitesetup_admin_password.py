@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bobik_web_setup", "0002_bobiksitesetup_admin_email"),
+        ("bobik_setup", "0002_bobiksitesetup_admin_email"),
     ]
 
     operations = [

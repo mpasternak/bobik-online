@@ -12,7 +12,12 @@ python = "^3.12"
 Django = "^5.1.1"
 psycopg = "^3.2.1"
 docutils = "^0.21.2"
+django-environ = "^0.11.2"
 
+
+[tool.poetry.group.dev.dependencies]
+ipdb = "^0.13.13"
+django-extensions = "^3.2.3"
 
 [build-system]
 requires = ["poetry-core"]

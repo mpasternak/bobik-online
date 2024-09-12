@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOBIK.AI - pacjent lat {{ object.wiek_pacjenta }}, zabieg {{ object.rodzaj_zabiegu }}</title>{% load static %}
+    <link rel="stylesheet" href="{% static "bobik_web_chat/css/bobik_web_chat.css" %}">
+
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+    <div class="spinner"></div>
+    <p class="loading-text">Proszę czekać...</p>
+</div>
+
+<div class="chat-container">
+    <div class="chat-messages">
+        {% for message in bobik_messages %}
+            <div class="message {{ message.type }}">{{ message.content|safe }}</div>
+        {% endfor %}
+        {% for message in messages %}
+            <div class="message systemowy">Komunikat systemowy: {{ message }}</div>
+        {% endfor %}
+    </div>
+    <div class="chat-input">
+        <form method="post" id="myForm">
+            {% csrf_token %}
+            <input type="text" name="msg" size="90%" placeholder="Wpisz wiadomość..." autocomplete="off">
+            <input type="submit">
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementsByClassName('chat-messages')[0].scrollTo(0, 65535)
+            document.getElementsByName('msg')[0].focus();
+        });
+
+
+        document.getElementById('myForm').addEventListener('submit', function (e) {
+            {#e.preventDefault();#}
+            document.getElementById('loading').style.display = 'flex';
+
+        });
+    </script>
+</div>
+</body>
+</html>

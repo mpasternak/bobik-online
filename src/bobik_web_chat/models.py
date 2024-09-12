@@ -1,12 +1,11 @@
 import uuid
 
-from bobik.bobik import Bobik
-from bobik.prompt import get_prompt
-from bobik_web_setup.models import BobikSiteSetup
+from bobik_prompts.models import BobikPrompt
+from bobik_setup.models import BobikSite
 from django.db import models
 
 
-class BobikChatParameters(models.Model):
+class BobikChat(models.Model):
     thread_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     imie_pacjenta = models.CharField(max_length=100)
@@ -19,29 +18,35 @@ class BobikChatParameters(models.Model):
 
     prompt_sent = models.BooleanField(default=False)
 
-    def get_bobik_chat(self):
-        site_setup = BobikSiteSetup.objects.get(site_id=1)
+    @property
+    def config(self):
+        return {"configurable": {"thread_id": str(self.thread_id)}}
 
-        ret = Bobik(
-            get_prompt(
+    @property
+    def site_setup(self):
+        return BobikSite.objects.get(site_id=1)
+
+    def start_bobik_chat(self):
+        if not self.prompt_sent:
+            system_prompt = BobikPrompt.objects.get(
+                rodzaj=BobikPrompt.PromptType.WYWIAD_PREANESTETYCZNY
+            ).format(
                 imie_pacjenta=self.imie_pacjenta,
                 jezyk_pacjenta=self.jezyk_pacjenta,
                 plec_pacjenta=self.plec_pacjenta,
                 wiek_pacjenta=self.wiek_pacjenta,
                 tryb_zabiegu=self.tryb_zabiegu,
                 rodzaj_zabiegu=self.rodzaj_zabiegu,
-                email_to=site_setup.admin_email,
+                email_to=self.site_setup.admin_email,
             )
-            + " Zawsze odpowiadaj tekstem w formacie RST. ",
-            thread_id=str(self.thread_id),
-            db_url="postgres://localhost/",
-            model=site_setup.ai_model,
-            model_api_key=site_setup.ai_api_key,
-        )
 
-        if not self.prompt_sent:
-            list(ret.say_hello())
+            self.site_setup.send_system_message(self.config, system_prompt)
+
             self.prompt_sent = True
             self.save(update_fields=["prompt_sent"])
 
-        return ret
+    def send_message(self, msg):
+        return self.site_setup.send_user_message(self.config, msg)
+
+    def get_messages(self):
+        return self.site_setup.get_checkpointer().list(config=self.config)
