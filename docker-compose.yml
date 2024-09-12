@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: bobik_online
+
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+
+  appserver:
+    env_file: .env.docker
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+volumes:
+  postgresql_data:
