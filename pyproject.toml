@@ -28,3 +28,6 @@ django-extensions = "^3.2.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.urls]
+Funding = "https://buymeacoffee.com/mpasternak"
